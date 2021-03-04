@@ -32,7 +32,7 @@ CXAnimateWidget::CXAnimateWidget(QWidget *parent,QJsonObject JsonIni) : QWidget(
     connect(m_pTimeLine, &QTimeLine::frameChanged, this, &CXAnimateWidget::onFrameChanged);
 
     m_GraphView->setScene(m_GrapScene);
-    setSpeed(20);
+    setSpeed(1000);
     start();
 }
 
@@ -64,7 +64,7 @@ void CXAnimateWidget::setSpeed(const int speed)
     m_pTimeLine->setFrameRange(0, speed);
 }
 
-void CXAnimateWidget::setRoateIni(QJsonObject jsonIni)
+void CXAnimateWidget::setJsonIni(QJsonObject jsonIni)
 {
     m_JsonIni.swap(jsonIni);
 }
@@ -100,12 +100,12 @@ QPointF CXAnimateWidget::StringToPoint(QString point)
     return QPointF();
 }
 
-SRoateRange CXAnimateWidget::StringToRange(QString range)
+SActiveRange CXAnimateWidget::StringToRange(QString range)
 {
     QStringList listpoint=range.split(",");
     if(listpoint.length()==2)
-        return SRoateRange(listpoint[0].toInt(),listpoint[1].toInt());
-    return SRoateRange();
+        return SActiveRange(listpoint[0].toInt(),listpoint[1].toInt());
+    return SActiveRange();
 }
 
 template<typename WidgetType>

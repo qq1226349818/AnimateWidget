@@ -3,15 +3,15 @@
 
 #include <QWidget>
 #include <QJsonObject>
+#include <QGraphicsProxyWidget>
 class QGraphicsView;
 class QGraphicsScene;
-class QGraphicsProxyWidget;
 class QTimeLine;
 
-struct SRoateRange{
+struct SActiveRange{
     int min;
     int max;
-    SRoateRange(int imin=0,int imax=0):min(imin),max(imax){
+    SActiveRange(int imin=0,int imax=0):min(imin),max(imax){
     };
     bool isEmply(){
         return min==0&&max==0;
@@ -20,6 +20,7 @@ struct SRoateRange{
         return max-min;
     }
 };
+
 
 class CXAnimateWidget : public QWidget
 {
@@ -32,14 +33,14 @@ public:
     void stop();
     void setSpeed(const int speed);
 
-    virtual void setRoateIni(QJsonObject jsonIni) =0;
+    virtual void setJsonIni(QJsonObject jsonIni) =0;
 private:
     virtual QTransform getTransform(QGraphicsProxyWidget *grapWidget) =0;
 protected:
     void resizeEvent(QResizeEvent *event);
 public slots:
     void onFrameChanged();
-private:
+protected:
     int m_frameNum;
     QTimeLine* m_pTimeLine;
     QGraphicsView* m_GraphView;
@@ -48,7 +49,7 @@ private:
     QJsonObject m_JsonIni;
 
     QPointF StringToPoint(QString point);
-    SRoateRange StringToRange(QString range);
+    SActiveRange StringToRange(QString range);
 
     //增加窗口类型
     template<typename WidgetType>

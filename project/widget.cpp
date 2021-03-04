@@ -16,6 +16,11 @@ Widget::Widget(QWidget *parent)
 //    ui->widget_2->setRoateIni({{"speed",50},{"angle_z",-1},{"range_z","30,180"},{"maxframe_z",500}});
 //    ui->widget_2->setRoateIni({{"speed",50},{"angle_z",5},{"range_z","30,180"}});
     ui->widget_2->setRoateIni({{"speed",20},{"angle_x",10},{"range_x","20,90"},{"angle_y",10},{"range_y","20,90"}});
+
+//    ui->widget_5->setJsonIni({{"time","1 20 6 8 6 4"},{"move","0,-250 0,0 0,-80 0,0 0,-30 0,0"},{"loop",0}});
+    ui->widget_5->setJsonIni({{"time","1 20 5 3"},{"move","0,-250 0,0 0,-10 0,0"},{"loop",-1}});
+//    ui->widget_5->setJsonIni({{"time","5"},{"move","0,-10"},{"loop",-1}});
+
     ui->pushButton_3->setFileName(QString("/Users/edz/Downloads/Close.svg"));
     ui->pushButton_3->setColors({{"hover","#fe5f55|#fff1c1"},{"click","red|yellow"}});
     ui->pushButton_3->setSVGModel(CXSVGPushButton::ESVGModel_Background);

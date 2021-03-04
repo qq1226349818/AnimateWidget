@@ -1,70 +1,11 @@
 #include "XAnimateWidget-Roate.h"
 #include <QDebug>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsProxyWidget>
-#include <QTransform>
-#include <QTimeLine>
 
-#include <QPushButton>
-#include <QLabel>
-#include <XSVGLabel.h>
-#include <QTextEdit>
-#include <QFrame>
-#include <QCheckBox>
-#include <QJsonObject>
-#include <QString>
-
-CXAnimateWidgetRoate::CXAnimateWidgetRoate(QWidget *parent,QJsonObject roateIni) : QWidget(parent),
-    m_JsonIni(roateIni),m_GrapScene(nullptr),m_pTimeLine(nullptr),m_GraphView(nullptr),m_roateNum(0)
+CXAnimateWidgetRoate::CXAnimateWidgetRoate(QWidget *parent,QJsonObject roateIni) : CXAnimateWidget(parent,roateIni)
 { 
-    m_GraphView = new QGraphicsView(this);
-    m_GrapScene = new QGraphicsScene(this);
-    m_GraphView->setAttribute(Qt::WA_TranslucentBackground);
-    m_GraphView->setWindowFlags(Qt::FramelessWindowHint);
-    m_GraphView->setStyleSheet("background:transparent;padding:0px;border:0px");
-    m_GraphView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_GraphView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    m_pTimeLine = new QTimeLine(1000, this);
-    m_pTimeLine->setLoopCount(0);
-    m_pTimeLine->setCurveShape(QTimeLine::LinearCurve);
-    connect(m_pTimeLine, &QTimeLine::frameChanged, this, &CXAnimateWidgetRoate::onFrameChanged);
-
-    m_GraphView->setScene(m_GrapScene);
-    setSpeed(20);
-    start();
 }
 
 CXAnimateWidgetRoate::~CXAnimateWidgetRoate()
-{
-
-}
-
-void CXAnimateWidgetRoate::paintEvent(QPaintEvent *event)
-{
-    AddGrapWidgetType<QTextEdit>();
-    AddGrapWidgetType<QLabel>();
-    AddGrapWidgetType<QPushButton>();
-    AddGrapWidgetType<QCheckBox>();
-}
-
-void CXAnimateWidgetRoate::start()
-{
-    m_pTimeLine->start();
-}
-
-void CXAnimateWidgetRoate::stop()
-{
-    m_pTimeLine->stop();
-}
-
-void CXAnimateWidgetRoate::setSpeed(const int speed)
-{
-    m_pTimeLine->setFrameRange(0, speed);
-}
-
-void CXAnimateWidgetRoate::setAngleRange(int beginAngle, int endAngle)
 {
 
 }
@@ -99,7 +40,7 @@ int CXAnimateWidgetRoate::getAngle(int nowFrame, ST_RoateIni roateIni)
     return range;
 }
 
-void CXAnimateWidgetRoate::setRoateIni(QJsonObject roateIni)
+void CXAnimateWidgetRoate::setJsonIni(QJsonObject roateIni)
 {
     m_JsonIni.swap(roateIni);
     int angle_X=m_JsonIni["angle_x"].toInt();
@@ -131,38 +72,12 @@ void CXAnimateWidgetRoate::setRoateIni(QJsonObject roateIni)
     setSpeed(m_RoateIni.speed);
 }
 
-void CXAnimateWidgetRoate::resizeEvent(QResizeEvent *event)
+void CXAnimateWidgetRoate::setRoateIni(QJsonObject roateIni)
 {
-    m_GraphView->resize(this->size());
+    setJsonIni(roateIni);
 }
 
-void CXAnimateWidgetRoate::onFrameChanged()
-{
-    m_roateNum++;
-    foreach(auto child, m_listGrapWidget){
-        child->setTransform(getTransform(child));
-    }
-    m_GrapScene->update();
-    m_GraphView->update();
-}
-
-QPointF CXAnimateWidgetRoate::StringToPoint(QString point)
-{
-    QStringList listpoint=point.split(",");
-    if(listpoint.length()==2)
-        return QPointF(listpoint[0].toInt(),listpoint[1].toInt());
-    return QPointF();
-}
-
-SRoateRange CXAnimateWidgetRoate::StringToRange(QString range)
-{
-    QStringList listpoint=range.split(",");
-    if(listpoint.length()==2)
-        return SRoateRange(listpoint[0].toInt(),listpoint[1].toInt());
-    return SRoateRange();
-}
-
-int CXAnimateWidgetRoate::computeAngle(int range, SRoateRange roateRange)
+int CXAnimateWidgetRoate::computeAngle(int range, SActiveRange roateRange)
 {
     if(range>roateRange.max){
         range=2*roateRange.max-range;
@@ -179,21 +94,11 @@ int CXAnimateWidgetRoate::computeAngle(int range, SRoateRange roateRange)
 void CXAnimateWidgetRoate::SetTransform(QTransform &transform, CXAnimateWidgetRoate::ST_RoateIni &roateIni, QPointF centerPos,Qt::Axis axis)
 {
     if(roateIni.angle!=0){
-    if(m_roateNum<roateIni.maxFrame||roateIni.maxFrame==0)
-    roateIni.nowFrame=m_roateNum;
+    if(m_frameNum<roateIni.maxFrame||roateIni.maxFrame==0)
+    roateIni.nowFrame=m_frameNum;
     if(!roateIni.pos.isNull())
         centerPos=roateIni.pos;
     transform=transform.translate( centerPos.x(),centerPos.y()).rotate(getAngle(roateIni.nowFrame,roateIni),axis).translate(-centerPos.x(),-centerPos.y());
     }
 }
 
-template<typename WidgetType>
-void CXAnimateWidgetRoate::AddGrapWidgetType()
-{
-    foreach(auto child, this->findChildren<WidgetType*>()){
-        child->setParent(nullptr);
-        child->setAttribute(Qt::WA_TranslucentBackground);
-        QGraphicsProxyWidget *gw = m_GrapScene->addWidget(child);
-        m_listGrapWidget.append(gw);
-    }
-}

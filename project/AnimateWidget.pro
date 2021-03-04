@@ -9,7 +9,10 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    XAnimateWidget-Demo.cpp \
+    XAnimateWidget-Move.cpp \
     XAnimateWidget-Roate.cpp \
+    XAnimateWidget-Scale.cpp \
     XAnimateWidget.cpp \
     XDragWidget.cpp \
     XSVGLabel.cpp \
@@ -18,7 +21,10 @@ SOURCES += \
     widget.cpp
 
 HEADERS += \
+    XAnimateWidget-Demo.h \
+    XAnimateWidget-Move.h \
     XAnimateWidget-Roate.h \
+    XAnimateWidget-Scale.h \
     XAnimateWidget.h \
     XDragWidget.h \
     XSVGLabel.h \
